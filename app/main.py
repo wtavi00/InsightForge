@@ -13,7 +13,6 @@ from app.core.logging import setup_logging
 from app.core.database import engine
 from app.websocket.manager import ws_manager
 
-
 # Setup logging
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -62,3 +61,32 @@ async def lifespan(app: FastAPI):
     
     logger.info("Shutdown complete")
   
+
+# Create FastAPI app
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    version=settings.VERSION,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    docs_url="/docs" if settings.DEBUG else None,
+    redoc_url="/redoc" if settings.DEBUG else None,
+    lifespan=lifespan
+)
+
+# Set up CORS
+if settings.BACKEND_CORS_ORIGINS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+# Add security middleware
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS] if settings.BACKEND_CORS_ORIGINS else ["*"]
+)
+
+# Include API router
+app.include_router(api_router, prefix=settings.API_V1_STR)
