@@ -90,3 +90,74 @@ app.add_middleware(
 
 # Include API router
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    """
+    Health check endpoint for monitoring
+    """
+    # Check Redis
+    redis_healthy = False
+    try:
+        await redis_client.client.ping()
+        redis_healthy = True
+    except:
+        pass
+    
+    # Check database
+    db_healthy = False
+    try:
+        async with engine.begin() as conn:
+            await conn.execute("SELECT 1")
+            db_healthy = True
+    except:
+        pass
+    
+    status = "healthy" if redis_healthy and db_healthy else "degraded"
+    
+    return {
+        "status": status,
+        "version": settings.VERSION,
+        "timestamp": datetime.utcnow().isoformat(),
+        "components": {
+            "redis": "healthy" if redis_healthy else "unhealthy",
+            "database": "healthy" if db_healthy else "unhealthy",
+            "api": "healthy"
+        }
+    }
+
+# Metrics endpoint for Prometheus
+@app.get("/metrics")
+async def metrics():
+    """
+    Prometheus metrics endpoint
+    """
+    from prometheus_client import generate_latest, REGISTRY
+    return generate_latest(REGISTRY)
+
+# Root endpoint
+@app.get("/")
+async def root():
+    """
+    Root endpoint with service information
+    """
+    return {
+        "service": settings.PROJECT_NAME,
+        "version": settings.VERSION,
+        "environment": "development" if settings.DEBUG else "production",
+        "documentation": "/docs" if settings.DEBUG else None,
+        "health_check": "/health",
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=settings.DEBUG,
+        log_level="info",
+        workers=1
+    )
