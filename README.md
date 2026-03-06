@@ -4,3 +4,5 @@ A production-ready analytics dashboard service built with FastAPI, TimescaleDB, 
 This service provides high-throughput event ingestion, real-time
 analytics, time-series aggregation, and live dashboard updates ---
 designed for scalable production environments.
+
+------------------------------------------------------------------------
