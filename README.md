@@ -6,3 +6,12 @@ analytics, time-series aggregation, and live dashboard updates ---
 designed for scalable production environments.
 
 ------------------------------------------------------------------------
+
+## Structure
+```bash
+InsightForge/
+├── docker-compose.yml
+├── .env.example
+├── requirements.txt
+├── README.md
+├── app/
