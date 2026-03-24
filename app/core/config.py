@@ -65,4 +65,17 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: Optional[str] = os.getenv("SMTP_PASSWORD")
     SMTP_TLS: bool = os.getenv("SMTP_TLS", "True").lower() == "true"
     FROM_EMAIL: str = os.getenv("FROM_EMAIL", "noreply@analytics.com")
+    # AWS S3
+    AWS_ACCESS_KEY_ID: Optional[str] = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY: Optional[str] = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_BUCKET_NAME: Optional[str] = os.getenv("AWS_BUCKET_NAME")
+    AWS_REGION: str = os.getenv("AWS_REGION", "us-east-1")
+    # Monitoring
+    ENABLE_METRICS: bool = os.getenv("ENABLE_METRICS", "True").lower() == "true"
+    SENTRY_DSN: Optional[str] = os.getenv("SENTRY_DSN")
+    
+    class Config:
+        case_sensitive = True
+        env_file = ".env"
 
+settings = Settings()
