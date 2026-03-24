@@ -49,16 +49,20 @@ class Settings(BaseSettings):
     CELERY_TASK_TRACK_STARTED: bool = True
     CELERY_TASK_TIME_LIMIT: int = 30 * 60  # 30 M
     CELERY_TASK_SOFT_TIME_LIMIT: int = 25 * 60  # 25 M
-    
     # Batch
     EVENT_BATCH_SIZE: int = int(os.getenv("EVENT_BATCH_SIZE", "1000"))
     EVENT_FLUSH_INTERVAL: int = int(os.getenv("EVENT_FLUSH_INTERVAL", "10"))
-
     # Cache
     CACHE_TTL: int = int(os.getenv("CACHE_TTL", "300"))  # 5 M (default)
     CACHE_MAX_SIZE: int = int(os.getenv("CACHE_MAX_SIZE", "10000"))
-    
     # Rate Limiting
     RATE_LIMIT_PER_SECOND: int = int(os.getenv("RATE_LIMIT_PER_SECOND", "100"))
     RATE_LIMIT_PER_MINUTE: int = int(os.getenv("RATE_LIMIT_PER_MINUTE", "5000"))
+    # Email
+    SMTP_HOST: Optional[str] = os.getenv("SMTP_HOST")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USER: Optional[str] = os.getenv("SMTP_USER")
+    SMTP_PASSWORD: Optional[str] = os.getenv("SMTP_PASSWORD")
+    SMTP_TLS: bool = os.getenv("SMTP_TLS", "True").lower() == "true"
+    FROM_EMAIL: str = os.getenv("FROM_EMAIL", "noreply@analytics.com")
 
