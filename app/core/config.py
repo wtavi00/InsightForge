@@ -54,3 +54,11 @@ class Settings(BaseSettings):
     EVENT_BATCH_SIZE: int = int(os.getenv("EVENT_BATCH_SIZE", "1000"))
     EVENT_FLUSH_INTERVAL: int = int(os.getenv("EVENT_FLUSH_INTERVAL", "10"))
 
+    # Cache
+    CACHE_TTL: int = int(os.getenv("CACHE_TTL", "300"))  # 5 M (default)
+    CACHE_MAX_SIZE: int = int(os.getenv("CACHE_MAX_SIZE", "10000"))
+    
+    # Rate Limiting
+    RATE_LIMIT_PER_SECOND: int = int(os.getenv("RATE_LIMIT_PER_SECOND", "100"))
+    RATE_LIMIT_PER_MINUTE: int = int(os.getenv("RATE_LIMIT_PER_MINUTE", "5000"))
+
