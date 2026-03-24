@@ -41,3 +41,16 @@ class Settings(BaseSettings):
         if self.DATABASE_URL:
             return self.DATABASE_URL
         return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+    # Celery
+    CELERY_BROKER_URL: str = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/1")
+    CELERY_RESULT_BACKEND: str = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/2")
+    CELERY_TASK_ALWAYS_EAGER: bool = os.getenv("CELERY_TASK_ALWAYS_EAGER", "False").lower() == "true"
+    CELERY_TASK_EAGER_PROPAGATES: bool = os.getenv("CELERY_TASK_EAGER_PROPAGATES", "True").lower() == "true"
+    CELERY_TASK_TRACK_STARTED: bool = True
+    CELERY_TASK_TIME_LIMIT: int = 30 * 60  # 30 M
+    CELERY_TASK_SOFT_TIME_LIMIT: int = 25 * 60  # 25 M
+    
+    # Batch
+    EVENT_BATCH_SIZE: int = int(os.getenv("EVENT_BATCH_SIZE", "1000"))
+    EVENT_FLUSH_INTERVAL: int = int(os.getenv("EVENT_FLUSH_INTERVAL", "10"))
+
