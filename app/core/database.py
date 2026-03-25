@@ -7,11 +7,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Convert PostgreSQL URL to async format
+# SQL URL to async format
 DATABASE_URL = settings.SQLALCHEMY_DATABASE_URI.replace(
     "postgresql://", "postgresql+asyncpg://"
 )
-# Create async engine
+# async engine
 engine = create_async_engine(
     DATABASE_URL,
     pool_size=settings.DATABASE_POOL_SIZE,
@@ -25,13 +25,13 @@ engine = create_async_engine(
         "timeout": 30,
         "server_settings": {
             "timezone": "UTC",
-            "statement_timeout": "30000",  # 30 seconds
-            "lock_timeout": "10000",  # 10 seconds
+            "statement_timeout": "30000",  # 30 S
+            "lock_timeout": "10000",  # 10 S
         }
     }
 )
 
-# Create session factory
+# Session factory
 AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,
@@ -40,5 +40,22 @@ AsyncSessionLocal = async_sessionmaker(
     autoflush=False,
 )
 
-# Base class for models
+
 Base = declarative_base()
+
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    """
+    #Dependency function that yields database sessions.
+"""
+    session = AsyncSessionLocal()
+    try:
+        logger.debug("Database session created")
+        yield session
+    except Exception as e:
+        logger.error(f"Database session error: {e}")
+        await session.rollback()
+        raise
+    finally:
+        await session.close()
+        logger.debug("Database session closed")
+        
