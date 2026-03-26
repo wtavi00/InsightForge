@@ -45,8 +45,7 @@ Base = declarative_base()
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
-    #Dependency function that yields database sessions.
-"""
+    Dependency function that yields database sessions."""
     session = AsyncSessionLocal()
     try:
         logger.debug("Database session created")
@@ -59,3 +58,24 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         await session.close()
         logger.debug("Database session closed")
         
+
+async def init_db() -> None:
+    """
+    Initialize database (create tables if they don't exist)
+"""
+    async with engine.begin() as conn:
+        # Create extensions
+        await conn.execute("CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;")
+        await conn.execute("CREATE EXTENSION IF NOT EXISTS uuid-ossp;")
+        
+        # Create tables
+        await conn.run_sync(Base.metadata.create_all)
+    
+    logger.info("Database initialized successfully")
+
+async def close_db_connections() -> None:
+    """
+    Close all database connections """
+    await engine.dispose()
+    logger.info("Database connections closed")
+
