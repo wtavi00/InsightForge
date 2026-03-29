@@ -35,3 +35,8 @@ class RedisClient:
                 decode_responses=False  # Keeping as bytes (binary data)
             )
           
+            await self.client.ping() # Test
+            logger.info(f"Redis client initialized successfully (pool size: {settings.REDIS_MAX_CONNECTIONS})")
+        except Exception as e:
+            logger.error(f"Failed to initialize Redis: {e}")
+            raise
