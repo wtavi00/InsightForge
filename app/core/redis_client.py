@@ -40,3 +40,16 @@ class RedisClient:
         except Exception as e:
             logger.error(f"Failed to initialize Redis: {e}")
             raise
+            
+    async def close(self):
+        """
+        Close all Redis connections
+        """
+        if self.pool:
+            await self.pool.disconnect()
+            logger.info("Redis connection pool closed")
+        
+        for pubsub in self._pubsub_connections:  # pubsub connection closed
+            await pubsub.close()
+        self._pubsub_connections.clear()
+
