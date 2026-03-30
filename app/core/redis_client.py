@@ -53,3 +53,18 @@ class RedisClient:
             await pubsub.close()
         self._pubsub_connections.clear()
 
+    async def get(self, key: str, default: Any = None) -> Optional[Any]:
+        """
+        Get value from cache
+        """
+        try:
+            value = await self.client.get(key)
+            if value:
+                try:
+                    return json.loads(value)
+                except:
+                    try:
+                        return pickle.loads(value)
+                    except:
+                        return value.decode('utf-8') if isinstance(value, bytes) else value
+            return default
