@@ -68,3 +68,6 @@ class RedisClient:
                     except:
                         return value.decode('utf-8') if isinstance(value, bytes) else value
             return default
+        except Exception as e:
+            logger.error(f"Redis get error for key {key}: {e}")
+            return default
