@@ -83,3 +83,6 @@ class RedisClient:
                 value = pickle.dumps(value)
             await self.client.setex(key, ttl, value)
             return True
+        except Exception as e:
+            logger.error(f"Redis set error for key {key}: {e}")
+            return False
