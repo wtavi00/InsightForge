@@ -71,3 +71,14 @@ class RedisClient:
         except Exception as e:
             logger.error(f"Redis get error for key {key}: {e}")
             return default
+            
+    async def set(self, key: str, value: Any, ttl: int = settings.CACHE_TTL) -> bool:
+        """
+        Set value in cache with TTL
+        """
+        try:
+            if isinstance(value, (dict, list)):
+                value = json.dumps(value)
+            elif not isinstance(value, (str, bytes)):
+                value = pickle.dumps(value)
+            
