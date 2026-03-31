@@ -20,3 +20,5 @@ InsightForge/
 │   ├── core/
 │   │   ├── __init__.py
 │   │   ├── config.py
+│   │   ├── database.py
+│   │   ├── redis_client.py
