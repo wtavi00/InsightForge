@@ -81,4 +81,5 @@ class RedisClient:
                 value = json.dumps(value)
             elif not isinstance(value, (str, bytes)):
                 value = pickle.dumps(value)
-            
+            await self.client.setex(key, ttl, value)
+            return True
