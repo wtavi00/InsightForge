@@ -101,3 +101,7 @@ class RedisClient:
             if result:
                 await self.client.expire(key, ttl)
             return bool(result)
+        except Exception as e:
+            logger.error(f"Redis set_nx error for key {key}: {e}")
+            return False
+
