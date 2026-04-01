@@ -86,3 +86,13 @@ class RedisClient:
         except Exception as e:
             logger.error(f"Redis set error for key {key}: {e}")
             return False
+
+    async def set_nx(self, key: str, value: Any, ttl: int = settings.CACHE_TTL) -> bool:
+        """
+        Set if not exists
+        """
+        try:
+            if isinstance(value, (dict, list)):
+                value = json.dumps(value)
+            elif not isinstance(value, (str, bytes)):
+                value = pickle.dumps(value)
