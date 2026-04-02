@@ -105,3 +105,9 @@ class RedisClient:
             logger.error(f"Redis set_nx error for key {key}: {e}")
             return False
 
+    async def delete(self, *keys: str) -> int:
+        """
+        Delete keys from cache
+        """
+        try:
+            
