@@ -110,4 +110,8 @@ class RedisClient:
         Delete keys from cache
         """
         try:
-            
+            return await self.client.delete(*keys)
+        except Exception as e:
+            logger.error(f"Redis delete error for keys {keys}: {e}")
+            return 0
+
