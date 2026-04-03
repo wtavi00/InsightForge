@@ -115,3 +115,13 @@ class RedisClient:
             logger.error(f"Redis delete error for keys {keys}: {e}")
             return 0
 
+    async def exists(self, key: str) -> bool:
+        """
+        Check if key exists
+        """
+        try:
+            return await self.client.exists(key) > 0
+        except Exception as e:
+            logger.error(f"Redis exists error for key {key}: {e}")
+            return False
+            
