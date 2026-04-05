@@ -125,3 +125,13 @@ class RedisClient:
             logger.error(f"Redis exists error for key {key}: {e}")
             return False
             
+    async def expire(self, key: str, ttl: int) -> bool:
+        """
+        Set expiration on key
+        """
+        try:
+            return await self.client.expire(key, ttl)
+        except Exception as e:
+            logger.error(f"Redis expire error for key {key}: {e}")
+            return False
+
