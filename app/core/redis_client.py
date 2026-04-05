@@ -141,3 +141,7 @@ class RedisClient:
         """
         try:
             return await self.client.ttl(key)
+        except Exception as e:
+            logger.error(f"Redis ttl error for key {key}: {e}")
+            return -2
+
