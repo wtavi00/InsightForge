@@ -135,3 +135,9 @@ class RedisClient:
             logger.error(f"Redis expire error for key {key}: {e}")
             return False
 
+    async def ttl(self, key: str) -> int:
+        """
+        Get TTL of key
+        """
+        try:
+            return await self.client.ttl(key)
