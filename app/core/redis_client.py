@@ -145,3 +145,9 @@ class RedisClient:
             logger.error(f"Redis ttl error for key {key}: {e}")
             return -2
 
+    async def incr(self, key: str, amount: int = 1) -> Optional[int]:
+        """
+        Increment counter
+        """
+        try:
+            return await self.client.incr(key, amount)
