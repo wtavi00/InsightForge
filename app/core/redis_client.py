@@ -151,3 +151,6 @@ class RedisClient:
         """
         try:
             return await self.client.incr(key, amount)
+        except Exception as e:
+            logger.error(f"Redis incr error for key {key}: {e}")
+            return None
