@@ -154,3 +154,13 @@ class RedisClient:
         except Exception as e:
             logger.error(f"Redis incr error for key {key}: {e}")
             return None
+            
+    async def decr(self, key: str, amount: int = 1) -> Optional[int]:
+        """
+        Decrement counter
+        """
+        try:
+            return await self.client.decr(key, amount)
+        except Exception as e:
+            logger.error(f"Redis decr error for key {key}: {e}")
+            return None
