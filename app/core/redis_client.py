@@ -194,3 +194,20 @@ class RedisClient:
             logger.error(f"Redis hget error for key {key}: {e}")
             return default
 
+    async def hgetall(self, key: str) -> dict:
+        """
+        Get all hash fields
+        """
+        try:
+            result = {}
+            data = await self.client.hgetall(key)
+            for k, v in data.items():
+                try:
+                    result[k.decode('utf-8')] = json.loads(v)
+                except:
+                    result[k.decode('utf-8')] = v.decode('utf-8') if isinstance(v, bytes) else v
+            return result
+        except Exception as e:
+            logger.error(f"Redis hgetall error for key {key}: {e}")
+            return {}
+            
