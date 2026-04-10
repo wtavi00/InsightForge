@@ -164,3 +164,33 @@ class RedisClient:
         except Exception as e:
             logger.error(f"Redis decr error for key {key}: {e}")
             return None
+            
+    async def hset(self, key: str, field: str, value: Any) -> bool:
+        """
+        Set hash field
+        """
+        try:
+            if isinstance(value, (dict, list)):
+                value = json.dumps(value)
+            await self.client.hset(key, field, value)
+            return True
+        except Exception as e:
+            logger.error(f"Redis hset error for key {key}: {e}")
+            return False
+
+    async def hget(self, key: str, field: str, default: Any = None) -> Any:
+        """
+        Get hash field
+        """
+        try:
+            value = await self.client.hget(key, field)
+            if value:
+                try:
+                    return json.loads(value)
+                except:
+                    return value.decode('utf-8') if isinstance(value, bytes) else value
+            return default
+        except Exception as e:
+            logger.error(f"Redis hget error for key {key}: {e}")
+            return default
+
