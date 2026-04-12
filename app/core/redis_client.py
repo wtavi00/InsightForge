@@ -222,3 +222,16 @@ class RedisClient:
         except Exception as e:
             logger.error(f"Redis publish error to channel {channel}: {e}")
             
+    async def subscribe(self, channel: str) -> redis.client.PubSub:
+        """
+        Subscribe to channel
+        """
+        try:
+            pubsub = self.client.pubsub()
+            await pubsub.subscribe(channel)
+            self._pubsub_connections.append(pubsub)
+            return pubsub
+        except Exception as e:
+            logger.error(f"Redis subscribe error to channel {channel}: {e}")
+            raise
+
