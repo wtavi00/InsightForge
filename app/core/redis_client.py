@@ -211,3 +211,14 @@ class RedisClient:
             logger.error(f"Redis hgetall error for key {key}: {e}")
             return {}
             
+    async def publish(self, channel: str, message: Any):
+        """
+        Publish message to channel
+        """
+        try:
+            if isinstance(message, (dict, list)):
+                message = json.dumps(message)
+            await self.client.publish(channel, message)
+        except Exception as e:
+            logger.error(f"Redis publish error to channel {channel}: {e}")
+            
