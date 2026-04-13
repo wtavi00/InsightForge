@@ -245,3 +245,16 @@ class RedisClient:
         except Exception as e:
             logger.error(f"Redis keys error for pattern {pattern}: {e}")
             return []
+
+    async def flush_all(self) -> bool:
+        """
+        Flush all keys (use with caution)
+        """
+        try:
+            await self.client.flushall()
+            logger.warning("Redis flushall executed")
+            return True
+        except Exception as e:
+            logger.error(f"Redis flushall error: {e}")
+            return False
+
