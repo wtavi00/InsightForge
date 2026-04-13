@@ -235,3 +235,13 @@ class RedisClient:
             logger.error(f"Redis subscribe error to channel {channel}: {e}")
             raise
 
+    async def keys(self, pattern: str = "*") -> List[str]:
+        """
+        Get keys matching pattern
+        """
+        try:
+            keys = await self.client.keys(pattern)
+            return [k.decode('utf-8') if isinstance(k, bytes) else k for k in keys]
+        except Exception as e:
+            logger.error(f"Redis keys error for pattern {pattern}: {e}")
+            return []
