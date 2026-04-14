@@ -258,3 +258,19 @@ class RedisClient:
             logger.error(f"Redis flushall error: {e}")
             return False
 
+    async def get_info(self) -> dict:
+        """
+        Get Redis info
+        """
+        try:
+            info = await self.client.info()
+            return {
+                "version": info.get("redis_version"),
+                "connected_clients": info.get("connected_clients"),
+                "used_memory_human": info.get("used_memory_human"),
+                "total_connections_received": info.get("total_connections_received"),
+                "total_commands_processed": info.get("total_commands_processed"),
+                "uptime_in_seconds": info.get("uptime_in_seconds"),
+                "keyspace_hits": info.get("keyspace_hits"),
+                "keyspace_misses": info.get("keyspace_misses"),
+            }
