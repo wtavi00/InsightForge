@@ -274,3 +274,6 @@ class RedisClient:
                 "keyspace_hits": info.get("keyspace_hits"),
                 "keyspace_misses": info.get("keyspace_misses"),
             }
+        except Exception as e:
+            logger.error(f"Redis get_info error: {e}")
+            return {}
