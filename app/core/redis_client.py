@@ -277,3 +277,12 @@ class RedisClient:
         except Exception as e:
             logger.error(f"Redis get_info error: {e}")
             return {}
+
+# Singleton instance
+redis_client = RedisClient()
+
+async def get_redis() -> RedisClient:
+    """
+    Dependency to get Redis client
+    """
+    return redis_client
