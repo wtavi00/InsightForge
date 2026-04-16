@@ -11,3 +11,9 @@ import logging
 import uuid
 
 logger = logging.getLogger(__name__)
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+security = HTTPBearer()
+api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+
