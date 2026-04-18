@@ -22,3 +22,4 @@ InsightForge/
 │   │   ├── config.py
 │   │   ├── database.py
 │   │   ├── redis_client.py
+│   │   ├── security.py
