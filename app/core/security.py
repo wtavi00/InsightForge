@@ -52,3 +52,5 @@ def create_refresh_token(data: Dict[str, Any]) -> str:
         "jti": str(uuid.uuid4()),
         "type": "refresh"
     })
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    return encoded_jwt
