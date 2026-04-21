@@ -78,3 +78,11 @@ async def verify_token(
     """Verify JWT token from Authorization header"""
     token = credentials.credentials
     return decode_token(token)
+
+async def verify_websocket_token(token: str) -> Optional[Dict[str, Any]]:
+    """Verify JWT token from WebSocket connection"""
+    try:
+        return decode_token(token)
+    except HTTPException:
+        return None
+        
