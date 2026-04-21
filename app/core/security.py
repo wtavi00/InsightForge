@@ -64,4 +64,11 @@ def decode_token(token: str) -> Dict[str, Any]:
             algorithms=[settings.ALGORITHM]
         )
         return payload
-        
+    except JWTError as e:
+        logger.warning(f"JWT decode error: {e}")
+        raise HTTPException(
+            status_code=401,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
