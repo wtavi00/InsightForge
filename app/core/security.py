@@ -72,3 +72,9 @@ def decode_token(token: str) -> Dict[str, Any]:
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+async def verify_token(
+    credentials: HTTPAuthorizationCredentials = Security(security)
+) -> Dict[str, Any]:
+    """Verify JWT token from Authorization header"""
+    token = credentials.credentials
+    return decode_token(token)
