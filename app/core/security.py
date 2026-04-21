@@ -54,3 +54,14 @@ def create_refresh_token(data: Dict[str, Any]) -> str:
     })
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
+
+def decode_token(token: str) -> Dict[str, Any]:
+    """Decode and validate JWT token"""
+    try:
+        payload = jwt.decode(
+            token, 
+            settings.SECRET_KEY, 
+            algorithms=[settings.ALGORITHM]
+        )
+        return payload
+        
