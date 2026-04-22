@@ -86,3 +86,6 @@ async def verify_websocket_token(token: str) -> Optional[Dict[str, Any]]:
     except HTTPException:
         return None
         
+def generate_api_key() -> str:
+    """Generate a new API key"""
+    return f"ak_{secrets.token_urlsafe(32)}"
