@@ -89,3 +89,11 @@ async def verify_websocket_token(token: str) -> Optional[Dict[str, Any]]:
 def generate_api_key() -> str:
     """Generate a new API key"""
     return f"ak_{secrets.token_urlsafe(32)}"
+
+def hash_api_key(api_key: str) -> str:
+    """Hash an API key for storage"""
+    return pwd_context.hash(api_key)
+
+def verify_api_key(api_key: str, hashed_key: str) -> bool:
+    """Verify an API key against its hash"""
+    return pwd_context.verify(api_key, hashed_key)
