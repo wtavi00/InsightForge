@@ -97,3 +97,16 @@ def hash_api_key(api_key: str) -> str:
 def verify_api_key(api_key: str, hashed_key: str) -> bool:
     """Verify an API key against its hash"""
     return pwd_context.verify(api_key, hashed_key)
+
+async def validate_api_key(
+    api_key: str = Security(api_key_header)
+) -> str:
+    """Validate API key from header"""
+    if not api_key:
+        raise HTTPException(
+            status_code=401,
+            detail="API key missing",
+            headers={"WWW-Authenticate": "API-Key"},
+        )
+    # validate against database
+    return api_key
