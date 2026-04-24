@@ -110,3 +110,14 @@ async def validate_api_key(
         )
     # validate against database
     return api_key
+
+def create_password_reset_token(email: str) -> str:
+    """Create password reset token"""
+    expire = datetime.utcnow() + timedelta(hours=24)
+    to_encode = {
+        "exp": expire,
+        "sub": email,
+        "type": "password_reset"
+    }
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
