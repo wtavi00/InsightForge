@@ -134,3 +134,8 @@ def verify_password_reset_token(token: str) -> Optional[str]:
         return payload.get("sub")
     except JWTError:
         return None
+
+def generate_secure_random_string(length: int = 32) -> str:
+    """Generate a cryptographically secure random string"""
+    return secrets.token_urlsafe(length)
+    
