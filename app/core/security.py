@@ -121,3 +121,11 @@ def create_password_reset_token(email: str) -> str:
     }
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
+def verify_password_reset_token(token: str) -> Optional[str]:
+    """Verify password reset token"""
+    try:
+        payload = jwt.decode(
+            token, 
+            settings.SECRET_KEY, 
+            algorithms=[settings.ALGORITHM]
+        )
