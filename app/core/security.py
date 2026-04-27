@@ -139,3 +139,13 @@ def generate_secure_random_string(length: int = 32) -> str:
     """Generate a cryptographically secure random string"""
     return secrets.token_urlsafe(length)
     
+def is_safe_redirect_url(url: str) -> bool:
+    """Check if a redirect URL is safe"""
+    from urllib.parse import urlparse
+    
+    # Only allow relative URLs
+    if url.startswith(('http://', 'https://')):
+        parsed = urlparse(url)
+        return parsed.netloc in settings.BACKEND_CORS_ORIGINS
+    
+    return not url.startswith('//') and not url.startswith('\\')
