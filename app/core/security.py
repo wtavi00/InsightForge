@@ -129,3 +129,8 @@ def verify_password_reset_token(token: str) -> Optional[str]:
             settings.SECRET_KEY, 
             algorithms=[settings.ALGORITHM]
         )
+        if payload.get("type") != "password_reset":
+            return None
+        return payload.get("sub")
+    except JWTError:
+        return None
