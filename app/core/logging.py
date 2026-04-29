@@ -7,18 +7,22 @@ import structlog
 
 def setup_logging():
     """Configure logging for the application"""
-    
-    # Set log level based on debug mode
     log_level = logging.DEBUG if settings.DEBUG else logging.INFO
-    
-    # Configure root logger
     root_logger = logging.getLogger()
     root_logger.setLevel(log_level)
-    
-    # Remove existing handlers
     root_logger.handlers.clear()
-    
-    # Create console handler
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(log_level)
-    
+    if settings.DEBUG:
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+    else:
+        # JSON - production
+        formatter = jsonlogger.JsonFormatter(
+            '%(asctime)s %(name)s %(levelname)s %(message)s %(pathname)s %(lineno)d',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+    console_handler.setFormatter(formatter)
+    root_logger.addHandler(console_handler)
