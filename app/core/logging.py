@@ -44,3 +44,13 @@ def setup_logging():
         cache_logger_on_first_use=True,
     )
 
+    # Set specific log levels for noisy libraries
+    logging.getLogger("uvicorn").setLevel(logging.WARNING)
+    logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+    logging.getLogger("aioredis").setLevel(logging.WARNING)
+    logging.getLogger("celery").setLevel(logging.INFO)
+    
+    # Log startup
+    logging.info(f"Logging configured - Environment: {'development' if settings.DEBUG else 'production'}")
+
