@@ -54,3 +54,19 @@ def setup_logging():
     # Log startup
     logging.info(f"Logging configured - Environment: {'development' if settings.DEBUG else 'production'}")
 
+class RequestLogger:
+    """Middleware for logging requests"""
+    
+    @staticmethod
+    def log_request(request, response=None, error=None):
+        """Log request details"""
+        logger = logging.getLogger("access")
+        
+        log_data = {
+            "method": request.method,
+            "path": request.url.path,
+            "query_params": str(request.query_params),
+            "client_host": request.client.host if request.client else None,
+            "user_agent": request.headers.get("user-agent"),
+            "request_id": request.headers.get("X-Request-ID"),
+        }
