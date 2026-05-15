@@ -70,3 +70,24 @@ class RequestLogger:
             "user_agent": request.headers.get("user-agent"),
             "request_id": request.headers.get("X-Request-ID"),
         }
+    
+if response:
+
+            log_data.update({
+
+                "status_code": response.status_code,
+
+                "response_time": getattr(response, "response_time", None),
+
+            })
+
+        
+
+        if error:
+
+            log_data.update({
+
+                "error": str(error),
+
+                "error_type": 
+
