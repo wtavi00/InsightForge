@@ -78,25 +78,34 @@ if response:
                 "status_code": response.status_code,
 
                 "response_time": getattr(response, "response_time", None),
-
             })
 
-        
         if error:
-
             log_data.update({
-
                 "error": str(error),
-
-                "error_type": 
-    type(error).__name__,
-
+                "error_type":
+            
+        type(error).__name__,
             })
-
             logger.error("Request failed", extra=log_data)
 
         else:
-
             logger.info("Request completed", extra=log_data)
+
+class StructuredLogger:
+
+    """Logger for app events"""
+
+    def __init__(self, name: str):
+
+        self.logger = structlog.get_logger(name)
+
+    def info(self, event: str, **kwargs):
+
+        self.logger.info(event, **kwargs)
+
+    def error(self, event: str, **kwargs):
+
+        self.logger.error(event, **kwargs)
 
 
