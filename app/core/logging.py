@@ -82,7 +82,6 @@ if response:
             })
 
         
-
         if error:
 
             log_data.update({
@@ -90,4 +89,14 @@ if response:
                 "error": str(error),
 
                 "error_type": 
+    type(error).__name__,
+
+            })
+
+            logger.error("Request failed", extra=log_data)
+
+        else:
+
+            logger.info("Request completed", extra=log_data)
+
 
