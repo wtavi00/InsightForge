@@ -93,19 +93,24 @@ if response:
             logger.info("Request completed", extra=log_data)
 
 class StructuredLogger:
-
     """Logger for app events"""
-
     def __init__(self, name: str):
-
         self.logger = structlog.get_logger(name)
 
     def info(self, event: str, **kwargs):
-
         self.logger.info(event, **kwargs)
 
     def error(self, event: str, **kwargs):
-
         self.logger.error(event, **kwargs)
+
+    def warning(self, event: str, **kwargs):
+        self.logger.warning(event, **kwargs)
+
+    def debug(self, event: str, **kwargs):
+        self.logger.debug(event, **kwargs)
+
+    def critical(self, event: str, **kwargs):
+        self.logger.critical(event, **kwargs)
+
 
 
