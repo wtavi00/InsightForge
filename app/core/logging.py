@@ -71,16 +71,13 @@ class RequestLogger:
             "request_id": request.headers.get("X-Request-ID"),
         }
     
-if response:
-
+        if response:
             log_data.update({
-
                 "status_code": response.status_code,
-
                 "response_time": getattr(response, "response_time", None),
             })
 
-        if error:
+        if error:
             log_data.update({
                 "error": str(error),
                 "error_type":
@@ -88,7 +85,6 @@ if response:
         type(error).__name__,
             })
             logger.error("Request failed", extra=log_data)
-
         else:
             logger.info("Request completed", extra=log_data)
 
@@ -111,6 +107,4 @@ class StructuredLogger:
 
     def critical(self, event: str, **kwargs):
         self.logger.critical(event, **kwargs)
-
-
 
