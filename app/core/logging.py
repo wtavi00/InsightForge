@@ -108,3 +108,6 @@ class StructuredLogger:
     def critical(self, event: str, **kwargs):
         self.logger.critical(event, **kwargs)
 
+def get_logger(name: str) -> StructuredLogger:
+    return StructuredLogger(name)
+
