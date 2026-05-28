@@ -15,3 +15,10 @@ from app.core.config import settings
 
 router = APIRouter() 
 logger = logging.getLogger(__name__)
+
+# Initialize rate limiter 
+rate_limiter = RateLimiter( 
+    redis_client=None, # Will be set in dependency 
+    rate_per_second=settings.RATE_LIMIT_PER_SECOND, 
+    rate_per_minute=settings.RATE_LIMIT_PER_MINUTE 
+    ) 
