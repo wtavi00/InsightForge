@@ -21,4 +21,13 @@ rate_limiter = RateLimiter(
     redis_client=None, # Will be set in dependency 
     rate_per_second=settings.RATE_LIMIT_PER_SECOND, 
     rate_per_minute=settings.RATE_LIMIT_PER_MINUTE 
-    ) 
+)
+
+@router.post("", response_model=EventResponse, status_code=202) 
+async def ingest_event( 
+    request: Request, 
+    event: EventCreate, 
+    background_tasks: BackgroundTasks, a
+    api_key: str = Depends(validate_api_key), 
+    redis: RedisClient = Depends(get_redis) 
+):
