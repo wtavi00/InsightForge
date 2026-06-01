@@ -31,3 +31,23 @@ async def ingest_event(
     api_key: str = Depends(validate_api_key), 
     redis: RedisClient = Depends(get_redis) 
 ):
+    """
+    Ingest a single analytics event
+    - **event_name**: Name of the event (e.g., page_view, purchase) 
+    - **user_id**: Optional user identifier 
+    - **session_id**: Optional session identifier 
+    - **properties**: Additional event properties (JSON object) 
+    - **value**: Optional numeric value 
+    - **timestamp**: Event timestamp (defaults to current UTC time) 
+    """ 
+    try: # Update rate limiter with redis client 
+        rate_limiter.redis = redis
+        await rate_limiter.check_limit(api_key)
+        validation_result = validate_event_data(event.dict()) 
+            if not validation_result["valid"]: 
+                raise HTTPException( 
+                    status_code=400, 
+                    detail={"message": "Event validation failed", "errors": validation_result["errors"]} 
+                )
+
+
