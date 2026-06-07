@@ -78,3 +78,12 @@ async def ingest_event(
     except Exception as e: 
         logger.error(f"Error ingesting event: {e}", exc_info=True) 
         raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.post("/batch", response_model=dict, status_code=202) 
+async def ingest_event_batch( 
+    request: Request, 
+    batch: EventBatch, 
+    background_tasks: BackgroundTasks, 
+    api_key: str = Depends(validate_api_key), 
+    redis: RedisClient = Depends(get_redis) 
+):
