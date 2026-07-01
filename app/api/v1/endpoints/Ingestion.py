@@ -87,3 +87,40 @@ async def ingest_event_batch(
     api_key: str = Depends(validate_api_key), 
     redis: RedisClient = Depends(get_redis) 
 ):
+    """ 
+    Ingest a batch of analytics events (up to 1000 events per batch) 
+    - **events**: List of events to ingest 
+    - **api_key**: API key for authentication 
+    """ 
+    try: 
+        # Update rate limiter with redis client 
+        rate_limiter.redis = redis # Validate batch size 
+        if len(batch.events) > 1000: 
+            raise HTTPException( 
+                status_code=400, 
+                detail="Batch size cannot exceed 1000 events" 
+            ) 
+        # Check rate limit (count each event in batch) 
+        await rate_limiter.check_limit(api_key, count=len(batch.events)) 
+        # Validate and enrich each event 
+        enriched_events = [] 
+        validation_errors = [] 
+        for i, event in enumerate(batch.events): 
+            # Validate event 
+            validation_result = validate_event_data(event.dict()) 
+            if not validation_result["valid"]: 
+                validation_errors.append({ 
+                    "index": i, 
+                    "event_id": str(event.event_id), 
+                    "errors": validation_result["errors"] 
+                }) 
+                continue 
+                #Enrich event 
+                enriched = await enrich_event_data( 
+                    event.dict(), 
+                    client_ip=request.client.host if request.client else None, 
+                    user_agent=request.headers.get("user-agent"), 
+                    headers=dict(request.headers) 
+                ) 
+                enriched_events.append(enriched)
+
