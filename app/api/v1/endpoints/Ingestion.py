@@ -124,3 +124,11 @@ async def ingest_event_batch(
                 ) 
                 enriched_events.append(enriched)
 
+        # If there were validation errors, return partial success 
+            if validation_errors: 
+                if not enriched_events: 
+                    raise HTTPException( 
+                        status_code=400, 
+                        detail={"message": "All events failed validation", "errors": validation_errors} 
+                    )
+
