@@ -131,4 +131,17 @@ async def ingest_event_batch(
                         status_code=400, 
                         detail={"message": "All events failed validation", "errors": validation_errors} 
                     )
+                    
+                #Process valid events 
+                background_tasks.add_task( 
+                    process_event_batch.delay, 
+                    enriched_events 
+                ) 
+                return { 
+                    "status": "partial_success", 
+                    "accepted_count": len(enriched_events), 
+                    "failed_count": len(validation_errors), 
+                    "errors": validation_errors, 
+                    "timestamp": datetime.utcnow().isoformat() 
+                }
 
