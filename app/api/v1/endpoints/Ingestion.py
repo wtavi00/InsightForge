@@ -145,3 +145,12 @@ async def ingest_event_batch(
                     "timestamp": datetime.utcnow().isoformat() 
                 }
 
+            # All events valid, process batch 
+            background_tasks.add_task( 
+                process_event_batch.delay, 
+                enriched_events 
+            ) 
+            logger.info(f"Batch of {len(batch.events)} events ingested successfully", extra={ 
+                "batch_size": len(batch.events), 
+                "api_key": api_key[:8] + "..." 
+            })
