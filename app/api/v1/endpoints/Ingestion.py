@@ -154,3 +154,14 @@ async def ingest_event_batch(
                 "batch_size": len(batch.events), 
                 "api_key": api_key[:8] + "..." 
             })
+            return { 
+                "status": "accepted", 
+                "batch_size": len(batch.events), 
+                "message": "Batch queued for processing", 
+                "timestamp": datetime.utcnow().isoformat() 
+            } 
+    except HTTPException: 
+        raise 
+    except Exception as e: 
+        logger.error(f"Error ingesting batch: {e}", exc_info=True) 
+        raise HTTPException(status_code=500, detail="Internal server error")
