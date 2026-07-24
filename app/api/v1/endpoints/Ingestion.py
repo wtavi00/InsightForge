@@ -172,5 +172,18 @@ async def ingest_event_batch(
     batch: EventBatch, 
     background_tasks: BackgroundTasks,
     api_key: str = Depends(validate_api_key), 
-    redis: RedisClient = Depends(get_redis) 
+    redis: RedisClient = Depends(get_redis)  
 ):
+    """ Ingest a batch of analytics events (up to 1000 events per batch) 
+    - **events**: List of events to ingest 
+    - **api_key**: API key for authentication 
+    """ 
+    try: 
+        # Update rate limiter with redis client 
+        rate_limiter.redis = redis 
+        # Validate batch size 
+        if len(batch.events) > 1000: 
+            raise HTTPException( 
+                status_code=400, 
+                detail="Batch size cannot exceed 1000 events" 
+            )
