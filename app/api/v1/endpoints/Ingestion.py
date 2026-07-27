@@ -187,3 +187,10 @@ async def ingest_event_batch(
                 status_code=400, 
                 detail="Batch size cannot exceed 1000 events" 
             )
+        # Check rate limit (count each event in batch) 
+        await rate_limiter.check_limit(api_key, count=len(batch.events))
+        
+       # Validate and enrich each event 
+        enriched_events = [] 
+        validation_errors = []
+
