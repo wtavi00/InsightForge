@@ -194,3 +194,13 @@ async def ingest_event_batch(
         enriched_events = [] 
         validation_errors = []
 
+    for i, event in enumerate(batch.events): 
+        # Validate event 
+        validation_result = validate_event_data(event.dict()) 
+        if not validation_result["valid"]: 
+            validation_errors.append({ 
+                "index": i, 
+                "event_id": str(event.event_id), 
+                "errors": validation_result["errors"] 
+            }) 
+            continue
