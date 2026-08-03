@@ -204,3 +204,12 @@ async def ingest_event_batch(
                 "errors": validation_result["errors"] 
             }) 
             continue
+            
+        # Enrich event 
+        enriched = await enrich_event_data( 
+            event.dict(), 
+            client_ip=request.client.host if request.client else None, 
+            user_agent=request.headers.get("user-agent"), 
+            headers=dict(request.headers) 
+        ) 
+        enriched_events.append(enriched)
