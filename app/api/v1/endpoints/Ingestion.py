@@ -227,4 +227,16 @@ async def ingest_event_batch(
             process_event_batch.delay,
             enriched_events
         )
+        return {
+                "status": "partial_success",
+                "accepted_count": len(enriched_events),
+                "failed_count": len(validation_errors),
+                "errors": validation_errors,
+                "timestamp": datetime.utcnow().isoformat()
+            }
         
+        # All events valid, process batch
+        background_tasks.add_task(
+            process_event_batch.delay,
+            enriched_events
+        )
