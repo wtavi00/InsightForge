@@ -244,3 +244,10 @@ async def ingest_event_batch(
             "batch_size": len(batch.events), 
             "api_key": api_key[:8] + "..." 
         })
+        return { 
+            "status": "accepted", 
+            "batch_size": len(batch.events), 
+            "message": "Batch queued for processing", 
+            "timestamp": datetime.utcnow().isoformat() 
+        }
+        
