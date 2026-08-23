@@ -251,3 +251,8 @@ async def ingest_event_batch(
             "timestamp": datetime.utcnow().isoformat() 
         }
         
+    except HTTPException: 
+        raise 
+    except Exception as e: 
+        logger.error(f"Error ingesting batch: {e}", exc_info=True) 
+        raise HTTPException(status_code=500, detail="Internal server error")
