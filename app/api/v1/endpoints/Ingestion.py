@@ -256,3 +256,14 @@ async def ingest_event_batch(
     except Exception as e: 
         logger.error(f"Error ingesting batch: {e}", exc_info=True) 
         raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.get("/health") 
+async def ingestion_health():
+    """ 
+    Health check for ingestion endpoint 
+    """ 
+return { 
+    "status": "healthy", 
+    "service": "ingestion", 
+    "timestamp": datetime.utcnow().isoformat() 
+}
