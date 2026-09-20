@@ -23,3 +23,13 @@ InsightForge/
 │   │   ├── database.py
 │   │   ├── redis_client.py
 │   │   ├── security.py
+│   │   └── logging.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── v1/
+│   │   │   ├── __init__.py
+│   │   │   ├── api.py
+│   │   │   ├── endpoints/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── ingestion.py
+│   │   │   │   ├── queries.py
