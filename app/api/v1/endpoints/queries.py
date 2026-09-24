@@ -31,4 +31,26 @@ async def get_event_data(
     current_user: User = Depends(get_current_user)
 ):
 
-  
+    """
+    Get aggregated event data for charts
+    
+    - **event_name**: Name of the event to query
+    - **start**: Start time in ISO format
+    - **end**: End time in ISO format
+    - **bucket**: Time bucket for aggregation
+    - **group_by**: Field to group results by
+    - **filters**: JSON string of filters (e.g., {"country": "US", "browser": "Chrome"})
+    - **aggregation**: Aggregation function to apply
+    - **timezone**: Timezone for bucket alignment
+    """
+    try:
+        # Validate date range
+        if end <= start:
+            raise HTTPException(status_code=400, detail="End time must be after start time")
+        
+        max_range = timedelta(days=90)
+        if (end - start) > max_range:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Date range cannot exceed 90 days. Requested: {(end - start).days} days"
+            )
