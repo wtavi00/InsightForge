@@ -80,9 +80,3 @@ async def get_event_data(
             aggregation=aggregation,
             user_id=str(current_user.id)
         )
-
-"""
-provided pattern is not valid till you put the adject 
-querry in the logind to the patr you want to get the enter value of 
-mathametical solutions for the edject return value for liner or constant structure
-"""
