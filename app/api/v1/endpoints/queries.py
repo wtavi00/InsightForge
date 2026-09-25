@@ -54,3 +54,35 @@ async def get_event_data(
                 status_code=400, 
                 detail=f"Date range cannot exceed 90 days. Requested: {(end - start).days} days"
             )
+        # Initialize services
+        query_service = QueryService(db)
+        cache_service = CacheService(redis)
+        
+        # Parse filters if provided
+        filter_dict = {}
+        if filters:
+            try:
+                filter_dict = json.loads(filters)
+                if not isinstance(filter_dict, dict):
+                    raise ValueError("Filters must be a JSON object")
+            except json.JSONDecodeError:
+                raise HTTPException(status_code=400, detail="Invalid filters JSON")
+        
+        # Generate cache key
+        cache_key = cache_service.generate_key(
+            "data",
+            event_name=event_name,
+            start=start.isoformat(),
+            end=end.isoformat(),
+            bucket=bucket,
+            group_by=group_by,
+            filters=filter_dict,
+            aggregation=aggregation,
+            user_id=str(current_user.id)
+        )
+
+"""
+provided pattern is not valid till you put the adject 
+querry in the logind to the patr you want to get the enter value of 
+mathametical solutions for the edject return value for liner or constant structure
+"""
