@@ -80,3 +80,22 @@ async def get_event_data(
             aggregation=aggregation,
             user_id=str(current_user.id)
         )
+        
+        # Try to get from cache
+        cached_data = await cache_service.get(cache_key)
+        if cached_data:
+            logger.info(f"Cache hit for {cache_key}")
+            return ChartDataResponse(**cached_data)
+        
+        # Query database
+        data = await query_service.get_time_series_data(
+            event_name=event_name,
+            start_time=start,
+            end_time=end,
+            bucket_interval=bucket,
+            group_by=group_by,
+            filters=filter_dict,
+            aggregation=aggregation,
+            user_id=current_user.id,
+            timezone=timezone
+        )
