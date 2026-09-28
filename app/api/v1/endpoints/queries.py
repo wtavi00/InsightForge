@@ -99,3 +99,28 @@ async def get_event_data(
             user_id=current_user.id,
             timezone=timezone
         )
+
+        # Format response
+        response = ChartDataResponse(
+            event_name=event_name,
+            start_time=start,
+            end_time=end,
+            bucket_interval=bucket,
+            data=[
+                TimeSeriesPoint(
+                    timestamp=point["bucket"],
+                    value=point["value"],
+                    count=point.get("count", 0),
+                    metadata=point.get("metadata", {})
+                ) for point in data["points"]
+            ],
+            total_events=data["total_events"],
+            unique_users=data.get("unique_users", 0),
+            total_value=data.get("total_value"),
+            metadata={
+                "aggregation": aggregation,
+                "group_by": group_by,
+                "filters": filter_dict,
+                "timezone": timezone
+            }
+        )
