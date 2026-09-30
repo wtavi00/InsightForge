@@ -124,3 +124,13 @@ async def get_event_data(
                 "timezone": timezone
             }
         )
+        # Cache the result (5 minutes TTL)
+        await cache_service.set(cache_key, response.dict(), ttl=300)
+        
+        return response
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error querying event data: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Internal server error")
