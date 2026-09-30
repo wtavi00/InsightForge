@@ -134,3 +134,22 @@ async def get_event_data(
     except Exception as e:
         logger.error(f"Error querying event data: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@router.get("/metrics/summary", response_model=MetricsSummary)
+async def get_metrics_summary(
+    event_names: Optional[List[str]] = Query(None, description="List of event names to include"),
+    start: datetime = Query(default_factory=lambda: datetime.utcnow() - timedelta(days=7)),
+    end: datetime = Query(default_factory=datetime.utcnow),
+    db: AsyncSession = Depends(get_db),
+    redis: RedisClient = Depends(get_redis),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get summary metrics for multiple events
+    
+    - **event_names**: Optional list of event names to filter by
+    - **start**: Start time in ISO format
+    - **end**: End time in ISO format
+    """
+    
