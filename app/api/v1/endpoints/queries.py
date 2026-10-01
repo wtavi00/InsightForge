@@ -152,4 +152,21 @@ async def get_metrics_summary(
     - **start**: Start time in ISO format
     - **end**: End time in ISO format
     """
-    
+        try:
+        query_service = QueryService(db)
+        cache_service = CacheService(redis)
+        
+        # Generate cache key
+        cache_key = cache_service.generate_key(
+            "summary",
+            event_names=event_names,
+            start=start.isoformat(),
+            end=end.isoformat(),
+            user_id=str(current_user.id)
+        )
+        
+        # Try to get from cache
+        cached_data = await cache_service.get(cache_key)
+        if cached_data:
+            return MetricsSummary(**cached_data)
+        
