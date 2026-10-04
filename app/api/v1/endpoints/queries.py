@@ -170,3 +170,20 @@ async def get_metrics_summary(
         if cached_data:
             return MetricsSummary(**cached_data)
         
+        # Get summary
+        summary = await query_service.get_metrics_summary(
+            event_names=event_names,
+            start_time=start,
+            end_time=end,
+            user_id=current_user.id
+        )
+        
+        # Cache the result
+        await cache_service.set(cache_key, summary.dict(), ttl=300)
+        
+        return summary
+        
+    except Exception as e:
+        logger.error(f"Error getting metrics summary: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Internal server error")
+
