@@ -187,3 +187,43 @@ async def get_metrics_summary(
         logger.error(f"Error getting metrics summary: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
 
+
+@router.get("/{event_name}/top/{field}")
+async def get_top_values(
+    event_name: str,
+    field: str,
+    start: datetime = Query(...),
+    end: datetime = Query(...),
+    limit: int = Query(10, ge=1, le=100),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get top values for a specific field (e.g., top countries, top browsers)
+    
+    - **event_name**: Name of the event
+    - **field**: Field to get top values for
+    - **start**: Start time
+    - **end**: End time
+    - **limit**: Number of top values to return
+    """
+    try:
+        query_service = QueryService(db)
+        
+        top_values = await query_service.get_top_field_values(
+            event_name=event_name,
+            field=field,
+            start_time=start,
+            end_time=end,
+            limit=limit,
+            user_id=current_user.id
+        )
+        
+        return {
+            "event_name": event_name,
+            "field": field,
+            "start_time": start,
+            "end_time": end,
+            "values": top_values
+        }
+
