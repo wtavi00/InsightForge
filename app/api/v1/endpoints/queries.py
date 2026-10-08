@@ -227,3 +227,18 @@ async def get_top_values(
             "values": top_values
         }
 
+    except Exception as e:
+        logger.error(f"Error getting top values: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.get("/{event_name}/funnel")
+async def get_funnel_analysis(
+    event_names: List[str] = Query(..., description="Ordered list of events in funnel"),
+    start: datetime = Query(...),
+    end: datetime = Query(...),
+    window: str = Query("1 day", description="Time window for conversion"),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    
