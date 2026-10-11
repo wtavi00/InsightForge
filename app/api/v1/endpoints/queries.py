@@ -240,5 +240,24 @@ async def get_funnel_analysis(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-
+    """
+    Perform funnel analysis on a sequence of events
+    
+    - **event_names**: Ordered list of events in the funnel
+    - **start**: Start time
+    - **end**: End time
+    - **window**: Time window for conversion between steps
+    """
+    try:
+        query_service = QueryService(db)
+        
+        funnel = await query_service.get_funnel_analysis(
+            event_names=event_names,
+            start_time=start,
+            end_time=end,
+            conversion_window=window,
+            user_id=current_user.id
+        )
+        
+        return funnel
     
