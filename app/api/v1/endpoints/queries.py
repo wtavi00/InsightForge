@@ -260,4 +260,8 @@ async def get_funnel_analysis(
         )
         
         return funnel
+      
+    except Exception as e:
+        logger.error(f"Error performing funnel analysis: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Internal server error")
     
