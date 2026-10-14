@@ -136,7 +136,7 @@ async def get_event_data(
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-@router.get("/metrics/summary", response_model=MetricsSummary)
+@router.get("/metrics/summary", response_model=metrics_summary)
 async def get_metrics_summary(
     event_names: Optional[List[str]] = Query(None, description="List of event names to include"),
     start: datetime = Query(default_factory=lambda: datetime.utcnow() - timedelta(days=7)),
@@ -168,7 +168,7 @@ async def get_metrics_summary(
         # Try to get from cache
         cached_data = await cache_service.get(cache_key)
         if cached_data:
-            return MetricsSummary(**cached_data)
+            return metrics_summary(**cached_data)
         
         # Get summary
         summary = await query_service.get_metrics_summary(
