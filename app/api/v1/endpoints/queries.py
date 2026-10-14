@@ -152,7 +152,7 @@ async def get_metrics_summary(
     - **start**: Start time in ISO format
     - **end**: End time in ISO format
     """
-        try:
+    try:
         query_service = QueryService(db)
         cache_service = CacheService(redis)
         
