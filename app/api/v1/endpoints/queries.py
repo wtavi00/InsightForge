@@ -30,7 +30,6 @@ async def get_event_data(
     redis: RedisClient = Depends(get_redis),
     current_user: User = Depends(get_current_user)
 ):
-
     """
     Get aggregated event data for charts
     
@@ -44,7 +43,7 @@ async def get_event_data(
     - **timezone**: Timezone for bucket alignment
     """
     try:
-        # Validate date range
+        # Validate range
         if end <= start:
             raise HTTPException(status_code=400, detail="End time must be after start time")
         
@@ -80,13 +79,11 @@ async def get_event_data(
             aggregation=aggregation,
             user_id=str(current_user.id)
         )
-        
         # Try to get from cache
         cached_data = await cache_service.get(cache_key)
         if cached_data:
             logger.info(f"Cache hit for {cache_key}")
             return ChartDataResponse(**cached_data)
-        
         # Query database
         data = await query_service.get_time_series_data(
             event_name=event_name,
@@ -99,8 +96,7 @@ async def get_event_data(
             user_id=current_user.id,
             timezone=timezone
         )
-
-        # Format response
+        # Format rep
         response = ChartDataResponse(
             event_name=event_name,
             start_time=start,
@@ -124,17 +120,14 @@ async def get_event_data(
                 "timezone": timezone
             }
         )
-        # Cache the result (5 minutes TTL)
+        # Cache res-5min TTL
         await cache_service.set(cache_key, response.dict(), ttl=300)
-        
         return response
-        
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error querying event data: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
-
 
 @router.get("/metrics/summary", response_model=metrics_summary)
 async def get_metrics_summary(
@@ -155,8 +148,7 @@ async def get_metrics_summary(
     try:
         query_service = QueryService(db)
         cache_service = CacheService(redis)
-        
-        # Generate cache key
+        # Gen. cache key
         cache_key = cache_service.generate_key(
             "summary",
             event_names=event_names,
@@ -164,12 +156,10 @@ async def get_metrics_summary(
             end=end.isoformat(),
             user_id=str(current_user.id)
         )
-        
-        # Try to get from cache
+        # geting from cache
         cached_data = await cache_service.get(cache_key)
         if cached_data:
             return metrics_summary(**cached_data)
-        
         # Get summary
         summary = await query_service.get_metrics_summary(
             event_names=event_names,
@@ -177,16 +167,13 @@ async def get_metrics_summary(
             end_time=end,
             user_id=current_user.id
         )
-        
-        # Cache the result
+        # Cache the res
         await cache_service.set(cache_key, summary.dict(), ttl=300)
-        
         return summary
         
     except Exception as e:
         logger.error(f"Error getting metrics summary: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
-
 
 @router.get("/{event_name}/top/{field}")
 async def get_top_values(
@@ -209,7 +196,6 @@ async def get_top_values(
     """
     try:
         query_service = QueryService(db)
-        
         top_values = await query_service.get_top_field_values(
             event_name=event_name,
             field=field,
@@ -218,7 +204,6 @@ async def get_top_values(
             limit=limit,
             user_id=current_user.id
         )
-        
         return {
             "event_name": event_name,
             "field": field,
@@ -226,7 +211,6 @@ async def get_top_values(
             "end_time": end,
             "values": top_values
         }
-
     except Exception as e:
         logger.error(f"Error getting top values: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -250,7 +234,6 @@ async def get_funnel_analysis(
     """
     try:
         query_service = QueryService(db)
-        
         funnel = await query_service.get_funnel_analysis(
             event_names=event_names,
             start_time=start,
@@ -258,7 +241,6 @@ async def get_funnel_analysis(
             conversion_window=window,
             user_id=current_user.id
         )
-        
         return funnel
       
     except Exception as e:
