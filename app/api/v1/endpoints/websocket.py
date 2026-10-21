@@ -34,3 +34,19 @@ async def websocket_live(
         logger.warning(f"WebSocket authentication failed for client {client_id}")
         await websocket.close(code=1008, reason="Invalid authentication")
         return
+
+    logger.info(f"WebSocket connection attempt - client_id: {client_id}, dashboard: {dashboard_id}, user: {user.get('sub')}")
+    await ws_manager.connect(websocket, client_id, dashboard_id, user)      # Accept connection
+    pubsub = None      # Subscribe to Redis channel for real-time updates
+    try:
+        pubsub = await redis.subscribe("event_updates")   # Create Redis pubsub connection
+        
+        # Send initial connection confirmation
+        await websocket.send_json({
+            "type": "connection_established",
+            "client_id": client_id,
+            "dashboard_id": dashboard_id,
+            "user_id": user.get("sub"),
+            "timestamp": datetime.utcnow().isoformat(),
+            "server_time": datetime.utcnow().timestamp()
+        })
