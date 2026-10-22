@@ -50,3 +50,32 @@ async def websocket_live(
             "timestamp": datetime.utcnow().isoformat(),
             "server_time": datetime.utcnow().timestamp()
         })
+
+        # Task for handling incoming messages from client
+        async def receive_messages():
+            try:
+                while True:
+                    message = await websocket.receive_text()
+                    data = json.loads(message)
+                    
+                    msg_type = data.get("type")             # Handle different message types
+                    if msg_type == "subscribe":
+                        new_dashboard = data.get("dashboard_id")
+                        if new_dashboard and new_dashboard != dashboard_id:
+                            # Move connection-new dashboard
+                            await ws_manager.move_connection(
+                                websocket, 
+                                client_id, 
+                                dashboard_id, 
+                                new_dashboard,
+                                user
+                            )
+                            dashboard_id = new_dashboard
+                            await websocket.send_json({
+                                "type": "subscribed",
+                                "dashboard_id": dashboard_id,
+                                "timestamp": datetime.utcnow().isoformat()
+                            })
+                            
+                            await send_initial_dashboard_data(websocket, dashboard_id, redis)       # Send init data for dashboard
+                    
