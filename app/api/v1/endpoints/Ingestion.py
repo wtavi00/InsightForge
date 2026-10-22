@@ -16,9 +16,9 @@ from app.core.config import settings
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-# Initialize rate limiter
+# Initialize count limiter
 rate_limiter = RateLimiter(
-    redis_client=None,  # Will be set in dependency
+    redis_client=None,  # Will set in dependency
     rate_per_second=settings.RATE_LIMIT_PER_SECOND,
     rate_per_minute=settings.RATE_LIMIT_PER_MINUTE
 )
@@ -42,7 +42,7 @@ async def ingest_event(
     - **timestamp**: Event timestamp (defaults to current UTC time)
     """
     try:
-        # Update rate limiter with redis client
+        # Update count limiter with redis client
         rate_limiter.redis = redis
         
         # Check rate limit
@@ -64,7 +64,7 @@ async def ingest_event(
             headers=dict(request.headers)
         )
         
-        # Add to processing queue
+        # Adding to processing queue
         background_tasks.add_task(
             process_event.delay,
             enriched_event
@@ -73,7 +73,7 @@ async def ingest_event(
         logger.info(f"Event {event.event_id} ingested successfully", extra={
             "event_id": str(event.event_id),
             "event_name": event.event_name,
-            "api_key": api_key[:8] + "..."  # Log partial key for security
+            "api_key": api_key[:8] + "..."  # Log partial key-security
         })
         
         return EventResponse(
@@ -104,7 +104,7 @@ async def ingest_event_batch(
     - **api_key**: API key for authentication
     """
     try:
-        # Update rate limiter with redis client
+        # Update count limiter with redis client
         rate_limiter.redis = redis
         
         # Validate batch size
@@ -114,7 +114,7 @@ async def ingest_event_batch(
                 detail="Batch size cannot exceed 1000 events"
             )
         
-        # Check rate limit (count each event in batch)
+        # Check count limit (count each event in batch)
         await rate_limiter.check_limit(api_key, count=len(batch.events))
         
         # Validate and enrich each event
