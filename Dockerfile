@@ -1,6 +1,8 @@
-# Multi-stage build for Analytics Dashboard Service
+"""
+Multi-stage build for Analytics Dashboard Service
+Build stage
+"""
 
-# Build stage
 FROM python:3.10-slim as builder
 
 WORKDIR /app
