@@ -32,7 +32,7 @@ class RedisClient:
             
             self.client = redis.Redis(
                 connection_pool=self.pool,
-                decode_responses=False  # Keeping as bytes (binary data)
+                decode_responses=False  # Keeping as binary data
             )
           
             await self.client.ping() # Test
