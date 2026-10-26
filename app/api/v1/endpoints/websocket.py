@@ -79,3 +79,24 @@ async def websocket_live(
                             
                             await send_initial_dashboard_data(websocket, dashboard_id, redis)       # Send init data for dashboard
                     
+                    elif msg_type == "ping":
+                        await websocket.send_json({
+                            "type": "pong",
+                            "timestamp": datetime.utcnow().timestamp()
+                        })
+                    
+                    elif msg_type == "filter":
+                        # Update filters for this connection
+                        filters = data.get("filters", {})
+                        await ws_manager.update_filters(client_id, filters)
+                        
+                        await websocket.send_json({
+                            "type": "filters_updated",
+                            "filters": filters,
+                            "timestamp": datetime.utcnow().isoformat()
+                        })
+                    
+                    elif msg_type == "unsubscribe":
+                        await ws_manager.disconnect(websocket, client_id, dashboard_id)
+                        await websocket.close()
+                        break
