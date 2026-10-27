@@ -18,15 +18,19 @@ security = HTTPBearer()
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a plain password against a hashed password"""
+    """
+    Verify a plain password against a hashed password
+    """
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password: str) -> str:
-    """Hash a password"""
+    """Hash a password
+    """
     return pwd_context.hash(password)
 
 def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
-    """Create JWT access token"""
+    """Create JWT access token
+    """
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -41,7 +45,8 @@ def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta]
     return encoded_jwt
 
 def create_refresh_token(data: Dict[str, Any]) -> str:
-    """Create JWT refresh token"""
+    """Create JWT refresh token
+    """
     to_encode = data.copy()
     
     expire = datetime.utcnow() + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
@@ -56,7 +61,8 @@ def create_refresh_token(data: Dict[str, Any]) -> str:
     return encoded_jwt
 
 def decode_token(token: str) -> Dict[str, Any]:
-    """Decode and validate JWT token"""
+    """Decode and validate JWT token
+    """
     try:
         payload = jwt.decode(
             token, 
@@ -75,27 +81,32 @@ def decode_token(token: str) -> Dict[str, Any]:
 async def verify_token(
     credentials: HTTPAuthorizationCredentials = Security(security)
 ) -> Dict[str, Any]:
-    """Verify JWT token from Authorization header"""
+    """Verify JWT token from Authorization header
+    """
     token = credentials.credentials
     return decode_token(token)
 
 async def verify_websocket_token(token: str) -> Optional[Dict[str, Any]]:
-    """Verify JWT token from WebSocket connection"""
+    """Verify JWT token from WebSocket connection
+    """
     try:
         return decode_token(token)
     except HTTPException:
         return None
         
 def generate_api_key() -> str:
-    """Generate a new API key"""
+    """Generate a new API key
+    """
     return f"ak_{secrets.token_urlsafe(32)}"
 
 def hash_api_key(api_key: str) -> str:
-    """Hash an API key for storage"""
+    """Hash an API key for storage
+    """
     return pwd_context.hash(api_key)
 
 def verify_api_key(api_key: str, hashed_key: str) -> bool:
-    """Verify an API key against its hash"""
+    """Verify an API key against its hash
+    """
     return pwd_context.verify(api_key, hashed_key)
 
 async def validate_api_key(
@@ -112,7 +123,8 @@ async def validate_api_key(
     return api_key
 
 def create_password_reset_token(email: str) -> str:
-    """Create password reset token"""
+    """Create password reset token
+    """
     expire = datetime.utcnow() + timedelta(hours=24)
     to_encode = {
         "exp": expire,
@@ -122,7 +134,8 @@ def create_password_reset_token(email: str) -> str:
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 def verify_password_reset_token(token: str) -> Optional[str]:
-    """Verify password reset token"""
+    """Verify password reset token
+    """
     try:
         payload = jwt.decode(
             token, 
@@ -136,11 +149,13 @@ def verify_password_reset_token(token: str) -> Optional[str]:
         return None
 
 def generate_secure_random_string(length: int = 32) -> str:
-    """Generate a cryptographically secure random string"""
+    """Generate a cryptographically secure random string
+    """
     return secrets.token_urlsafe(length)
     
 def is_safe_redirect_url(url: str) -> bool:
-    """Check if a redirect URL is safe"""
+    """Check if a redirect URL is safe
+    """
     from urllib.parse import urlparse
     
     # Only allow relative URLs
