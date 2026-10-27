@@ -6,7 +6,9 @@ from app.core.config import settings
 import structlog
 
 def setup_logging():
-    """Configure logging for the application"""
+    """
+    Configure logging for the application
+    """
     log_level = logging.DEBUG if settings.DEBUG else logging.INFO
     root_logger = logging.getLogger()
     root_logger.setLevel(log_level)
@@ -55,11 +57,14 @@ def setup_logging():
     logging.info(f"Logging configured - Environment: {'development' if settings.DEBUG else 'production'}")
 
 class RequestLogger:
-    """Middleware for logging requests"""
+    """
+    Middleware for logging requests
+    """
     
     @staticmethod
     def log_request(request, response=None, error=None):
-        """Log request details"""
+        """
+        Log request details"""
         logger = logging.getLogger("access")
         
         log_data = {
