@@ -9,7 +9,6 @@ from datetime import timedelta
 import asyncio
 
 logger = logging.getLogger(__name__)
-
 class RedisClient:
     def __init__(self):
         self.client: Optional[redis.Redis] = None
@@ -28,13 +27,11 @@ class RedisClient:
                 socket_connect_timeout=settings.REDIS_SOCKET_CONNECT_TIMEOUT,
                 retry_on_timeout=settings.REDIS_RETRY_ON_TIMEOUT,
                 health_check_interval=30,
-            )
-            
+            ) 
             self.client = redis.Redis(
                 connection_pool=self.pool,
                 decode_responses=False  # Keeping as binary data
             )
-          
             await self.client.ping() # Test
             logger.info(f"Redis client initialized successfully (pool size: {settings.REDIS_MAX_CONNECTIONS})")
         except Exception as e:
@@ -48,7 +45,6 @@ class RedisClient:
         if self.pool:
             await self.pool.disconnect()
             logger.info("Redis connection pool closed")
-        
         for pubsub in self._pubsub_connections:  # pubsub connection closed
             await pubsub.close()
         self._pubsub_connections.clear()
@@ -96,7 +92,6 @@ class RedisClient:
                 value = json.dumps(value)
             elif not isinstance(value, (str, bytes)):
                 value = pickle.dumps(value)
-
             result = await self.client.setnx(key, value)
             if result:
                 await self.client.expire(key, ttl)
@@ -280,7 +275,6 @@ class RedisClient:
 
 # Singleton instance
 redis_client = RedisClient()
-
 async def get_redis() -> RedisClient:
     """
     Dependency to get Redis client
