@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings(BaseSettings):
-
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "Analytics Dashboard"
     VERSION: str = "1.0.0"
@@ -41,23 +40,28 @@ class Settings(BaseSettings):
         if self.DATABASE_URL:
             return self.DATABASE_URL
         return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        
     # Celery
     CELERY_BROKER_URL: str = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/1")
     CELERY_RESULT_BACKEND: str = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/2")
     CELERY_TASK_ALWAYS_EAGER: bool = os.getenv("CELERY_TASK_ALWAYS_EAGER", "False").lower() == "true"
     CELERY_TASK_EAGER_PROPAGATES: bool = os.getenv("CELERY_TASK_EAGER_PROPAGATES", "True").lower() == "true"
     CELERY_TASK_TRACK_STARTED: bool = True
-    CELERY_TASK_TIME_LIMIT: int = 30 * 60  # 30 M
-    CELERY_TASK_SOFT_TIME_LIMIT: int = 25 * 60  # 25 M
+    CELERY_TASK_TIME_LIMIT: int = 30 * 60
+    CELERY_TASK_SOFT_TIME_LIMIT: int = 25 * 60
+    
     # Batch
     EVENT_BATCH_SIZE: int = int(os.getenv("EVENT_BATCH_SIZE", "1000"))
     EVENT_FLUSH_INTERVAL: int = int(os.getenv("EVENT_FLUSH_INTERVAL", "10"))
+    
     # Cache
-    CACHE_TTL: int = int(os.getenv("CACHE_TTL", "300"))  # 5 M (default)
+    CACHE_TTL: int = int(os.getenv("CACHE_TTL", "300"))  # 5m set as default
     CACHE_MAX_SIZE: int = int(os.getenv("CACHE_MAX_SIZE", "10000"))
+    
     # Rate Limiting
     RATE_LIMIT_PER_SECOND: int = int(os.getenv("RATE_LIMIT_PER_SECOND", "100"))
     RATE_LIMIT_PER_MINUTE: int = int(os.getenv("RATE_LIMIT_PER_MINUTE", "5000"))
+
     # Email
     SMTP_HOST: Optional[str] = os.getenv("SMTP_HOST")
     SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
@@ -65,11 +69,13 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: Optional[str] = os.getenv("SMTP_PASSWORD")
     SMTP_TLS: bool = os.getenv("SMTP_TLS", "True").lower() == "true"
     FROM_EMAIL: str = os.getenv("FROM_EMAIL", "noreply@analytics.com")
+    
     # AWS S3
     AWS_ACCESS_KEY_ID: Optional[str] = os.getenv("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY: Optional[str] = os.getenv("AWS_SECRET_ACCESS_KEY")
     AWS_BUCKET_NAME: Optional[str] = os.getenv("AWS_BUCKET_NAME")
     AWS_REGION: str = os.getenv("AWS_REGION", "us-east-1")
+    
     # Monitoring
     ENABLE_METRICS: bool = os.getenv("ENABLE_METRICS", "True").lower() == "true"
     SENTRY_DSN: Optional[str] = os.getenv("SENTRY_DSN")
@@ -77,5 +83,4 @@ class Settings(BaseSettings):
     class Config:
         case_sensitive = True
         env_file = ".env"
-
 settings = Settings()
