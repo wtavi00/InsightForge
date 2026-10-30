@@ -100,3 +100,16 @@ async def websocket_live(
                         await ws_manager.disconnect(websocket, client_id, dashboard_id)
                         await websocket.close()
                         break
+                        
+            except WebSocketDisconnect:
+                raise
+            except json.JSONDecodeError:
+                logger.warning(f"Invalid JSON received from client {client_id}")
+                await websocket.send_json({
+                    "type": "error",
+                    "message": "Invalid JSON format",
+                    "timestamp": datetime.utcnow().isoformat()
+                })
+            except Exception as e:
+                logger.error(f"Error receiving message from {client_id}: {e}")
+        
