@@ -6,11 +6,11 @@ from app.core.config import settings
 import logging
 
 logger = logging.getLogger(__name__)
-
-# SQL URL to async format
+""" SQL URL to async format """
 DATABASE_URL = settings.SQLALCHEMY_DATABASE_URI.replace(
     "postgresql://", "postgresql+asyncpg://"
 )
+
 # async engine
 engine = create_async_engine(
     DATABASE_URL,
@@ -25,13 +25,13 @@ engine = create_async_engine(
         "timeout": 30,
         "server_settings": {
             "timezone": "UTC",
-            "statement_timeout": "30000",  # 30 S
-            "lock_timeout": "10000",  # 10 S
+            "statement_timeout": "30000",  # 30S
+            "lock_timeout": "10000",  # 10S
         }
     }
 )
 
-# Session factory
+# creatr seasion
 AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,
@@ -40,12 +40,10 @@ AsyncSessionLocal = async_sessionmaker(
     autoflush=False,
 )
 
-
 Base = declarative_base()
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    """
-    Dependency function that yields database sessions."""
+    """ Dependency function that yields database sessions. """
     session = AsyncSessionLocal()
     try:
         logger.debug("Database session created")
@@ -60,9 +58,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         
 
 async def init_db() -> None:
-    """
-    Initialize database (create tables if they don't exist)
-"""
+    """ Initialize database (create tables if they don't exist) """
     async with engine.begin() as conn:
         # Create extensions
         await conn.execute("CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;")
@@ -70,12 +66,9 @@ async def init_db() -> None:
         
         # Create tables
         await conn.run_sync(Base.metadata.create_all)
-    
     logger.info("Database initialized successfully")
 
 async def close_db_connections() -> None:
-    """
-    Close all database connections """
+    """ Close all database connections """
     await engine.dispose()
     logger.info("Database connections closed")
-
