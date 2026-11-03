@@ -113,3 +113,20 @@ async def websocket_live(
             except Exception as e:
                 logger.error(f"Error receiving message from {client_id}: {e}")
         
+        # Handling Redis messages
+        async def handle_redis_messages():
+            try:
+                async for message in pubsub.listen():
+                    if message["type"] == "message":
+                        try:
+                            data = json.loads(message["data"])
+                            
+                            # Check if this update is compatable to this client
+                            if await ws_manager.should_send_update(client_id, data, dashboard_id):
+                                await websocket.send_json({
+                                    "type": "live_update",
+                                    "data": data,
+                                    "timestamp": datetime.utcnow().isoformat()
+                                })
+                        except json.JSONDecodeError:
+                            logger.error(f"Invalid JSON in Redis message: {message['data']}")
