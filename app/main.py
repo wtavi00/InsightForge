@@ -13,8 +13,7 @@ from app.core.logging import setup_logging
 from app.core.database import engine
 from app.websocket.manager import ws_manager
 
-# Setup logging
-setup_logging()
+setup_logging()  # login setup
 logger = logging.getLogger(__name__)
 
 @asynccontextmanager
