@@ -130,3 +130,23 @@ async def websocket_live(
                                 })
                         except json.JSONDecodeError:
                             logger.error(f"Invalid JSON in Redis message: {message['data']}")
+                        except Exception as e:
+                            logger.error(f"Error processing Redis message: {e}")
+            except asyncio.CancelledError:
+                pass
+            except Exception as e:
+                logger.error(f"Error in Redis message handler: {e}")
+        
+        # Sending heartbeat
+        async def send_heartbeat():
+            try:
+                while True:
+                    await asyncio.sleep(30)  # Send heartbeat every 30 seconds
+                    await websocket.send_json({
+                        "type": "heartbeat",
+                        "timestamp": datetime.utcnow().timestamp()
+                    })
+            except asyncio.CancelledError:
+                pass
+            except Exception as e:
+                logger.error(f"Error sending heartbeat: {e}")
