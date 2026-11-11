@@ -150,3 +150,18 @@ async def websocket_live(
                 pass
             except Exception as e:
                 logger.error(f"Error sending heartbeat: {e}")
+
+        # Run all tasks concurrently
+        tasks = [
+            asyncio.create_task(receive_messages()),
+            asyncio.create_task(handle_redis_messages()),
+            asyncio.create_task(send_heartbeat())
+        ]
+        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+        
+        for task in pending:
+            task.cancel()       # Cancel pending tasks after 3 seconds
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
